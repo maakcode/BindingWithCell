@@ -15,7 +15,7 @@ final class CombineViewController: UIViewController {
         Setting(title: "Email Subscription"),
     ]
 
-    private var bag: Set<AnyCancellable> = []
+    private var bag: [UUID: AnyCancellable] = [:]
 
     // MARK: Views
 
@@ -62,14 +62,17 @@ extension CombineViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = data[indexPath.row].title
         cell.toggleSwitch.isOn = data[indexPath.row].isOn
 
-        cell.$isOn.dropFirst()
+
+        let id = data[indexPath.row].id
+        bag[id]?.cancel()
+        bag[id] = cell.$isOn.dropFirst()
             .removeDuplicates()
             .subscribe(on: DispatchQueue.main)
             .sink { [weak self] isOn in
                 self?.data[indexPath.row].isOn = isOn
                 self?.tableView.reloadData()
             }
-            .store(in: &bag)
+
         return cell
     }
 }

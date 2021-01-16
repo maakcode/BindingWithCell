@@ -16,7 +16,7 @@ final class RxViewController: UIViewController {
         Setting(title: "Email Subscription"),
     ]
 
-    private var disposeBag = DisposeBag()
+    private var disposeDict: [UUID: Disposable] = [:]
 
     // MARK: Views
 
@@ -63,13 +63,14 @@ extension RxViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = data[indexPath.row].title
         cell.toggleSwitch.isOn = data[indexPath.row].isOn
 
-        cell.toggleSwitch.rx.isOn.changed.asDriver()
-            .distinctUntilChanged().debug()
+        let id = data[indexPath.row].id
+        disposeDict[id]?.dispose()
+        disposeDict[id] = cell.toggleSwitch.rx.isOn.changed.asDriver()
+            .distinctUntilChanged()
             .drive(onNext: { [weak self] isOn in
                 self?.data[indexPath.row].isOn = isOn
                 self?.tableView.reloadData()
             })
-            .disposed(by: disposeBag)
 
         return cell
     }
