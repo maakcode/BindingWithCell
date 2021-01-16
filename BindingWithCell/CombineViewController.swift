@@ -62,15 +62,14 @@ extension CombineViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = data[indexPath.row].title
         cell.toggleSwitch.isOn = data[indexPath.row].isOn
 
-        cell.$isOn.removeDuplicates()
+        cell.$isOn.dropFirst()
+            .removeDuplicates()
             .subscribe(on: DispatchQueue.main)
             .sink { [weak self] isOn in
-                print("Sink, \(isOn)")
                 self?.data[indexPath.row].isOn = isOn
                 self?.tableView.reloadData()
             }
             .store(in: &bag)
-        print("bag: \(bag.count)")
         return cell
     }
 }
