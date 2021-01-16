@@ -67,7 +67,8 @@ extension CombineViewController: UITableViewDelegate, UITableViewDataSource {
         bag[id]?.cancel()
         bag[id] = cell.$isOn.dropFirst()
             .removeDuplicates()
-            .subscribe(on: DispatchQueue.main)
+//            .subscribe(on: DispatchQueue.main)
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .sink { [weak self] isOn in
                 self?.data[indexPath.row].isOn = isOn
                 self?.tableView.reloadData()

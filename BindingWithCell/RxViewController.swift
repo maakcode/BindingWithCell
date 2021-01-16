@@ -67,6 +67,7 @@ extension RxViewController: UITableViewDelegate, UITableViewDataSource {
         disposeDict[id]?.dispose()
         disposeDict[id] = cell.toggleSwitch.rx.isOn.changed.asDriver()
             .distinctUntilChanged()
+            .debounce(.milliseconds(300))
             .drive(onNext: { [weak self] isOn in
                 self?.data[indexPath.row].isOn = isOn
                 self?.tableView.reloadData()
