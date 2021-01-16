@@ -63,7 +63,7 @@ final class RxCell: UITableViewCell {
 final class CombineCell: UITableViewCell {
     static let reuseID = String(describing: self)
 
-    @Published var isOn: Bool = false
+    @Published var isOn: Bool = true
 
     // MARK: Views
 
